@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="en-us"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Using blend mode to create an image tint | Yotabyte</title><meta name="description"><meta name="generator" content="Yotabyte"><meta name="author" content="Yotam Praag"><meta name="keywords" content="sjaak van den berg, svdb, bitcoin, crypto, payment, integration, bitcoins, wordpress, betaling, webshop, front end, design, ontwerp, developer"><meta name="HandheldFriendly" content="True"><meta name="MobileOptimized" content="320"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1,user-scalable=0"><link rel="stylesheet" type="text/css" href="/yotabyte/styles/screen.css"><link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/monokai-sublime.min.css"><link rel="apple-touch-icon" sizes="57x57" href="/images/apple-touch-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="/images/apple-touch-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="/images/apple-touch-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="/images/apple-touch-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="/images/apple-touch-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="/images/apple-touch-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="/images/apple-touch-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="/images/apple-touch-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-180x180.png"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png"><link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png"><link rel="icon" type="image/png" sizes="160x160" href="/images/favicon-160x160.png"><link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png"><meta name="msapplication-TileColor" content="#121315"><meta name="msapplication-TileImage" content="/images/mstile-144x144.png"></head><body itemscope itemtype="https://schema.org/WebPage"><header itemscope itemtype="https://schema.org/WPHeader"><a href="/yotabyte/"><img src="/images/svdb.png" alt="Yotabyte" title="Yotabyte"></a><h1><a href="/yotabyte/" alt="Yotabyte" title="Yotabyte" itemprop="headline">Yotabyte</a></h1><p itemprop="description"></p><nav itemscope itemtype="https://schema.org/SiteNavigationElement"><ul><li itemprop="name"><a href="/" alt="Home" title="Home" itemprop="url">Home</a></li><li itemprop="name"><a href="/articles" alt="Articles" title="Articles" itemprop="url">Articles</a></li><li itemprop="name"><a href="/about" alt="About" title="About" itemprop="url">About</a></li></ul></nav><div class="space"></div></header><main itemscope itemtype="https://schema.org/Blog"><article class="full"><h1 itemprop="headline">Using blend mode to create an image tint</h1><span class="post-meta">Published on<time itemprop="datePublished" datetime="2016-04-28T09:11:35.000Z"> Thursday, April 28th 2016 at 12:11</time><br>Last updated on<time itemprop="dateModified" datetime="2016-04-28T09:11:35.000Z"> Friday, April 29th 2016 at 22:12</time></span><p>##Use <code>background-blend-mode</code> for a simple tint</p>
+<p>You can use the <a href="http://caniuse.com/#search=background-blend-mode" target="_blank" rel="external"><code>background-blend-mode</code></a> css porperty:</p>
+<pre><code>.background-tint {
+  background-color: rgba(200,100,0,.5); // Tint color
+  background-blend-mode: multiply;
+}
+</code></pre><p>Place it on any element with a background image and you’re good to go.</p>
+<p>The property is well supported in modern browsers and if not you can use a <a href="https://github.com/idevsoftware/js-background-blend-mode" target="_blank" rel="external">polyfill</a>.</p>
+<p><strong><a href="http://output.jsbin.com/jegalerawa" target="_blank" rel="external">Working demo</a></strong></p>
+<hr>
+<p>#Other Options</p>
+<p>##Use a flat linear-gradient and a multiple background overlay</p>
+<pre><code>.background-tint {
+  background-image:
+    linear-gradient( rgba(0,0,0,.5), rgba(0,0,0,.5) ),
+    url(&apos;http://placehold.it/420&apos;)
+}
+</code></pre><p>I think this is the most widely used technique but it has the downside of being hardcoded i.e. you can’t just take a class, stick it on an element and make a tint.</p>
+<p>You could make this into a less or sass mixin, something like:</p>
+<p><strong><code>less</code></strong></p>
+<pre><code>.background-tint(@tint-color, @image-url) {
+  background-image:
+    linear-gradient( @tint-color, @tint-color ),
+    url( @image-url )
+}
+</code></pre><p><strong><code>sass</code></strong></p>
+<pre><code>@mixin background-tint($tint_color, $image_url) {
+  background-image:
+    linear-gradient( $tint_color, $tint_color ),
+    url( $image_url )
+}
+</code></pre><p><strong><a href="http://output.jsbin.com/siyiwemete/1" target="_blank" rel="external">Working demo</a></strong></p>
+<p>##Use a transparent background</p>
+<pre><code>.background-tint { position: relative; }
+
+.background-tint::after {
+  content: &quot;&quot;;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.5);
+}
+</code></pre><p>This method has the advantage of working on most browsers and is just a nice class you add to any element.<br>The downside is that if you have anything else inside of that element you will have to wrap it in a div with some kind of positioning <code>position: relative</code> would work best.</p>
+<p>Example:</p>
+<!-- language: lang-html -->
+<pre><code>&lt;div class=&quot;background-tint&quot;&gt;
+  &lt;div class=&quot;u-relative&quot;&gt;Some text here&lt;/div&gt;
+&lt;/div&gt;
+</code></pre><!-- language: lang-css -->
+<pre><code>.u-relative { position: relative; }
+</code></pre><p><strong><a href="http://output.jsbin.com/nuxuwacuzu/1" target="_blank" rel="external">Working Demo</a></strong></p>
+</article></main><script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/languages/less.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/languages/scss.min.js"></script><script>hljs.initHighlightingOnLoad();
+</script>
+</body></html>
